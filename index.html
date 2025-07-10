@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tastescape</title>
+    <style>
+        :root {
+            --cyan: #00BCD4;
+            --dark-cyan: #00838F;
+            --light-cyan: #B2EBF2;
+            --white: #FFFFFF;
+            --light-grey: #F5F5F5;
+            --medium-grey: #E0E0E0;
+            --dark-grey: #757575;
+            --black: #212121;
+            --red: #F44336;
+            --dark-red: #D32F2F;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--light-grey);
+            background-image: url('background1.jpg');
+            background-size: cover;
+            background-position: left;
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            height: 60px;
+            background-color: var(--white);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        h1 {
+            margin: 0;
+            color: var(--dark-cyan);
+        }
+
+        .form-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--dark-cyan);
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--medium-grey);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--cyan);
+            box-shadow: 0 0 0 2px var(--light-cyan);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-add {
+            background-color: var(--cyan);
+            color: var(--white);
+        }
+
+        .btn-add:hover {
+            background-color: var(--dark-cyan);
+            transform: translateY(-1px);
+        }
+
+        .btn-remove {
+            background-color: var(--red);
+            color: var(--white);
+        }
+
+        .btn-remove:hover {
+            background-color: var(--dark-red);
+            transform: translateY(-1px);
+        }
+
+        .entries-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .entries-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .entry {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid var(--medium-grey);
+            transition: background-color 0.2s;
+        }
+
+        .entry:hover {
+            background-color: var(--light-cyan);
+        }
+
+        .entry.selected {
+            background-color: var(--light-cyan);
+            border-left: 4px solid var(--cyan);
+        }
+
+        .entry-info {
+            flex: 1;
+            display: flex;
+            gap: 20px;
+        }
+
+        .entry-field {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .entry-field strong {
+            display: block;
+            font-size: 12px;
+            color: var(--dark-grey);
+            margin-bottom: 5px;
+        }
+
+        .rating {
+            color: #FFC107;
+            letter-spacing: 2px;
+        }
+
+        .no-entries {
+            text-align: center;
+            padding: 30px;
+            color: var(--dark-grey);
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .entry-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="LOGO1.png" class="logo" alt="Tastescape Logo">
+            <h1>Tastescape</h1>
+        </header>
+
+        <div class="form-container">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="restaurant">Restaurant</label>
+                    <input type="text" id="restaurant" placeholder="Restaurant name">
+                </div>
+                <div class="form-group">
+                    <label for="dish">Dish</label>
+                    <input type="text" id="dish" placeholder="Dish name">
+                </div>
+                <div class="form-group">
+                    <label for="rating">Rating (0.5-5)</label>
+                    <input type="number" id="rating" placeholder="0.5-5" min="0.5" max="5" step="0.5">
+                </div>
+                <div class="form-group">
+                    <label for="review">Review</label>
+                    <input type="text" id="review" placeholder="Your review">
+                </div>
+            </div>
+            <div class="button-group">
+                <button id="add-btn" class="btn-add">Add Entry</button>
+            </div>
+        </div>
+
+        <div class="entries-container">
+            <div class="button-group">
+                <button id="remove-btn" class="btn-remove">Remove Selected</button>
+            </div>
+            <div class="entries-list" id="entries-list">
+                <div class="no-entries">No entries yet. Add your first restaurant experience!</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const restaurantInput = document.getElementById('restaurant');
+            const dishInput = document.getElementById('dish');
+            const ratingInput = document.getElementById('rating');
+            const reviewInput = document.getElementById('review');
+            const addBtn = document.getElementById('add-btn');
+            const removeBtn = document.getElementById('remove-btn');
+            const entriesList = document.getElementById('entries-list');
+
+            // Data Storage
+            let entries = JSON.parse(localStorage.getItem('tastescape-entries')) || [];
+            let selectedEntryId = null;
+
+            // Initialize the app
+            renderEntries();
+
+            // Event Listeners
+            addBtn.addEventListener('click', addEntry);
+            removeBtn.addEventListener('click', removeEntry);
+
+            // Functions
+            function addEntry() {
+                const restaurant = restaurantInput.value.trim();
+                const dish = dishInput.value.trim();
+                const rating = parseFloat(ratingInput.value);
+                const review = reviewInput.value.trim();
+
+                // Validation
+                if (!restaurant) {
+                    alert('Please enter a restaurant name');
+                    return;
+                }
+                
+                if (!dish) {
+                    alert('Please enter a dish name');
+                    return;
+                }
+                
+                if (isNaN(rating) || rating < 0.5 || rating > 5) {
+                    alert('Please enter a valid rating between 0.5 and 5');
+                    return;
+                }
+                
+                if (!review) {
+                    alert('Please enter your review');
+                    return;
+                }
+
+                // Create new entry
+                const newEntry = {
+                    id: Date.now(),
+                    restaurant,
+                    dish,
+                    rating,
+                    review,
+                    date: new Date().toISOString()
+                };
+
+                // Add to entries array
+                entries.unshift(newEntry); // Add to beginning to show newest first
+                saveData();
+                
+                // Clear inputs
+                restaurantInput.value = '';
+                dishInput.value = '';
+                ratingInput.value = '';
+                reviewInput.value = '';
+                
+                // Refresh the list
+                renderEntries();
+            }
+
+            function removeEntry() {
+                if (!selectedEntryId) {
+                    alert('Please select an entry to remove');
+                    return;
+                }
+
+                if (!confirm('Are you sure you want to remove this entry?')) {
+                    return;
+                }
+
+                // Remove the selected entry
+                entries = entries.filter(entry => entry.id !== selectedEntryId);
+                saveData();
+                
+                // Reset selection
+                selectedEntryId = null;
+                
+                // Refresh the list
+                renderEntries();
+            }
+
+            function renderEntries() {
+                if (entries.length === 0) {
+                    entriesList.innerHTML = '<div class="no-entries">No entries yet. Add your first restaurant experience!</div>';
+                    return;
+                }
+
+                entriesList.innerHTML = entries.map(entry => `
+                    <div class="entry ${entry.id === selectedEntryId ? 'selected' : ''}" data-id="${entry.id}">
+                        <div class="entry-info">
+                            <div class="entry-field">
+                                <strong>Restaurant</strong>
+                                ${entry.restaurant}
+                            </div>
+                            <div class="entry-field">
+                                <strong>Dish</strong>
+                                ${entry.dish}
+                            </div>
+                            <div class="entry-field">
+                                <strong>Rating</strong>
+                                <span class="rating">${renderStars(entry.rating)} (${entry.rating})</span>
+                            </div>
+                            <div class="entry-field">
+                                <strong>Review</strong>
+                                ${entry.review}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Add click event to entries
+                document.querySelectorAll('.entry').forEach(entry => {
+                    entry.addEventListener('click', function() {
+                        selectedEntryId = parseInt(this.getAttribute('data-id'));
+                        renderEntries();
+                    });
+                });
+            }
+
+            function renderStars(rating) {
+                const fullStars = Math.floor(rating);
+                const halfStar = rating % 1 >= 0.5 ? 1 : 0;
+                const emptyStars = 5 - fullStars - halfStar;
+                
+                return '★'.repeat(fullStars) + 
+                       (halfStar ? '½' : '') + 
+                       '☆'.repeat(emptyStars);
+            }
+
+            function saveData() {
+                localStorage.setItem('tastescape-entries', JSON.stringify(entries));
+                // In production: Add API call here to save to server
+            }
+        });
+    </script>
+</body>
+</html>
