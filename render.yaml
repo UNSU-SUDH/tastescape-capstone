@@ -2,16 +2,16 @@ services:
   - type: web
     name: tastescape-capstone
     env: python
-    buildCommand: "./build.sh"
-    startCommand: "gunicorn app:app"
+    buildCommand: ""
+    startCommand: gunicorn app:app
     envVars:
       - key: DB_HOST
-        value: your-db-host
-      - key: DB_PORT
-        value: 3306
+        value: tramway.proxy.rlwy.net
       - key: DB_USER
-        value: your-username
+        value: root
       - key: DB_PASSWORD
-        value: your-password
+        value: <your-real-password>  # 🔐 Replace this with the actual password from Railway
       - key: DB_NAME
         value: railway
+      - key: DB_PORT
+        value: "56178"
