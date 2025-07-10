@@ -3,19 +3,18 @@ from flask_cors import CORS
 import mysql.connector
 import os
 
-app = Flask(__name__, static_folder=".", static_url_path="")
+app = Flask(__name__, static_url_path="", static_folder=".")
 CORS(app)
 
-# MySQL connection
+# MySQL connection using environment variables (from Render)
 db = mysql.connector.connect(
-    host="tramway.proxy.rlwy.net",
-    port=56178,
-    user="root",
-    password="oUjNxksdCsPbkJThxYJMknMjAfpMgZee",
-    database="railway"
+    host=os.environ["DB_HOST"],
+    user=os.environ["DB_USER"],
+    password=os.environ["DB_PASSWORD"],
+    database=os.environ["DB_NAME"],
+    port=int(os.environ["DB_PORT"])
 )
 cursor = db.cursor(dictionary=True)
-
 @app.route("/")
 def serve_frontend():
     return send_from_directory(app.static_folder, "index.html")
