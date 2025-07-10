@@ -2,19 +2,40 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import mysql.connector
 import os
+from flask import Flask, request, jsonify
+from appwrite.client import Client
+from appwrite.services.databases import Databases
+from appwrite.exception import AppwriteException
+from dotenv import load_dotenv
 
-app = Flask(__name__, static_url_path="", static_folder=".")
+load_dotenv()
+
+app = Flask(__name__)
+
+# Initialize Appwrite client
+client = Client()
+
+client.set_endpoint(os.environ.get('APPWRITE_PROJECT_ID'))  # or your self-hosted URL
+client.set_project(os.environ.get("APPWRITE_ENDPOINT"))  # Replace with your project ID
+client.set_key(os.environ.get("APPWRITE_KEY"))  # Use an API key with database access
+
+# Initialize the Databases service
+database = Databases(client, database_id=os.environ.get('DATABASE_ID'))
+
+
+app = Flask(__name__, static_folder=".", static_url_path="")
 CORS(app)
 
-# MySQL connection using environment variables (from Render)
+# MySQL connection
 db = mysql.connector.connect(
-    host=os.environ["DB_HOST"],
-    user=os.environ["DB_USER"],
-    password=os.environ["DB_PASSWORD"],
-    database=os.environ["DB_NAME"],
-    port=int(os.environ["DB_PORT"])
+    host=os.environ.get("DB_HOST", "localhost"),
+    user=os.environ.get("DB_USER", "root"),
+    password=os.environ.get("DB_PASSWORD", "unsu@123"),
+    database=os.environ.get("DB_NAME", "tastescape")
 )
+
 cursor = db.cursor(dictionary=True)
+
 @app.route("/")
 def serve_frontend():
     return send_from_directory(app.static_folder, "index.html")
@@ -52,12 +73,34 @@ def get_reviews(restaurant_id):
 
 @app.route("/reviews", methods=["GET"])
 def get_all_reviews():
-    cursor.execute("""
-        SELECT r.user, r.rating, r.comment, res.name AS restaurant
-        FROM reviews r
-        JOIN restaurants res ON r.restaurant_id = res.id
-    """)
-    return jsonify(cursor.fetchall())
+    try:
+        # Fetch all reviews
+        reviews_data = database.list_documents(
+            collection_id=os.environ.get("REVIEWS_COLLECTION_ID")
+        )['documents']
+
+        # Fetch all restaurants (so we can map their IDs to names)
+        restaurants_data = database.list_documents(
+            collection_id=os.environ.get("RESTAURANTS_COLLECTION_ID")
+        )['documents']
+
+        # Create a mapping: restaurant_id -> restaurant name
+        restaurant_map = {res['$id']: res['name'] for res in restaurants_data}
+
+        # Build response
+        result = []
+        for review in reviews_data:
+            result.append({
+                "user": review.get("user"),
+                "rating": review.get("rating"),
+                "comment": review.get("comment"),
+                "restaurant": restaurant_map.get(review.get("restaurant_id"), "Unknown")
+            })
+
+        return jsonify(result)
+
+    except AppwriteException as e:
+        return jsonify({"error": str(e)}), 500
 
 # --- Run the app on the correct port (for Render) ---
 if __name__ == "__main__":
