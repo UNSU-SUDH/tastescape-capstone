@@ -8,12 +8,12 @@ CORS(app)
 
 # MySQL connection
 db = mysql.connector.connect(
-    host=os.environ.get("DB_HOST", "localhost"),
-    user=os.environ.get("DB_USER", "root"),
-    password=os.environ.get("DB_PASSWORD", "unsu@123"),
-    database=os.environ.get("DB_NAME", "tastescape")
+    host="tramway.proxy.rlwy.net",
+    port=56178,
+    user="root",
+    password="oUjNxksdCsPbkJThxYJMknMjAfpMgZee",
+    database="railway"
 )
-
 cursor = db.cursor(dictionary=True)
 
 @app.route("/")
